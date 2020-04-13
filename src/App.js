@@ -88,8 +88,8 @@ class App extends Component {
 
   onButtonSubmit = () => {
     this.setState({ imageUrl: this.state.input ,box: [{}], foundedFaces: -1});
-    fetch('http://localhost:3000/imageUrl', {
-      /*fetch('https://hidden-inlet-68145.herokuapp.com/imageUrl', {*/
+    /*fetch('http://localhost:3000/imageUrl', {*/
+      fetch('https://hidden-inlet-68145.herokuapp.com/imageUrl', {
       method: 'post',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -99,8 +99,8 @@ class App extends Component {
       .then(response => response.json())
       .then(response => {
         if (response) {
-          fetch('http://localhost:3000/image', {
-            /*fetch('https://hidden-inlet-68145.herokuapp.com/image', {*/
+          /*fetch('http://localhost:3000/image', {*/
+            fetch('https://hidden-inlet-68145.herokuapp.com/image', {
             method: 'put',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
