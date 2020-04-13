@@ -37,9 +37,11 @@ const particlesOptions = {
 }
 
 const initialState = {
+  route: '',
   input: '',
   imageUrl: '',
-  box: {},
+  box: [{}],
+  foundedFaces: -1,
   isSignedIn: false,
   user: {
     id: '',
@@ -56,6 +58,8 @@ class App extends Component {
     super();
     this.state = initialState;
   }
+
+
 
   loadUser = (data) => {
     this.setState({
@@ -83,8 +87,9 @@ class App extends Component {
   }
 
   onButtonSubmit = () => {
-    this.setState({ imageUrl: this.state.input });
-    fetch('https://hidden-inlet-68145.herokuapp.com/imageUrl', {
+    this.setState({ imageUrl: this.state.input ,box: [{}], foundedFaces: -1});
+    fetch('http://localhost:3000/imageUrl', {
+      /*fetch('https://hidden-inlet-68145.herokuapp.com/imageUrl', {*/
       method: 'post',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -94,7 +99,8 @@ class App extends Component {
       .then(response => response.json())
       .then(response => {
         if (response) {
-          fetch('https://hidden-inlet-68145.herokuapp.com/image', {
+          fetch('http://localhost:3000/image', {
+            /*fetch('https://hidden-inlet-68145.herokuapp.com/image', {*/
             method: 'put',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -107,17 +113,24 @@ class App extends Component {
             })
             .catch(console.log);
         }
-        this.displayBoundingBox(this.calculateFaceLocation(response))
+        if (response.outputs[0].data.regions){
+          this.state.foundedFaces = response.outputs[0].data.regions.length     
+          for (var i = 0; i < response.outputs[0].data.regions.length; i++) {
+            this.displayBoundingBox(this.calculateFaceLocation(response.outputs[0].data.regions[i]))
+          }
+        } else {
+          this.state.foundedFaces = 0;
+        } 
+        
       })
       .catch(err => console.log(err));
   }
 
   calculateFaceLocation = (data) => {
-    const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
+    const clarifaiFace = data.region_info.bounding_box;
     const image = document.getElementById('inputImage');
     const width = Number(image.width);
     const height = Number(image.height);
-    console.log(width);
     return {
       leftCol: clarifaiFace.left_col * width,
       topRow: clarifaiFace.top_row * height,
@@ -127,11 +140,11 @@ class App extends Component {
   }
 
   displayBoundingBox = (box) => {
-    this.setState({ box: box })
+    this.state.box.push(box)
   }
 
   render() {
-    const { isSignedIn, imageUrl, route, box } = this.state;
+    const { isSignedIn, imageUrl, route, box, foundedFaces } = this.state;
     return (
       <div className="App">
         <Particles className='particles'
@@ -149,10 +162,19 @@ class App extends Component {
               onInputChange={this.onInputChange}
               onButtonSubmit={this.onButtonSubmit}
             />
+            {foundedFaces != -1
+            ?(foundedFaces === 1
+              ?<div className="pa2">Founded <font className="white" size="4"><bold>{this.state.foundedFaces}</bold></font> face</div>
+              :(foundedFaces > 1
+                ?<div className="pa2">Founded <font className="white" size="4"><bold>{this.state.foundedFaces}</bold></font> faces</div>
+                :<div className="white pa2">No faces were found</div>))
+            :(imageUrl != ''
+              ?<div className="white pa2">Processing...</div>
+              :<div></div>)}
             <FaceRecognition box={box} imageUrl={imageUrl} />
           </div>
           : (
-            route === 'signin' || route === 'signout'
+            route === 'signin' || route === 'signout' || route === ''
               ? <SignIn loadUser={this.loadUser} onRouteChange={this.onRouteChange} />
               : <Register loadUser={this.loadUser} onRouteChange={this.onRouteChange} />
           )
