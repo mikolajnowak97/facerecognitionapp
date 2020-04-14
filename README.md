@@ -1,4 +1,3 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ##### First project with React, node.js, PostgreSQL, etc.
 
@@ -11,3 +10,6 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 #
 *Emails are only used to log in. No ads or spam.
+
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
