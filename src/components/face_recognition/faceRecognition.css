@@ -1,4 +1,4 @@
-.boudning-box{
+.bounding-box{
 position: absolute;
 box-shadow: 0 0 0 3px #149df2 inset;
 display: flex;
@@ -8,7 +8,7 @@ cursor: pointer;
 transition: 0.2s;
 }
 
-.boudning-box:hover{
+.bounding-box:hover{
     position: absolute;
     box-shadow: 0 0 0 4px #e43bfa inset;
     display: flex;

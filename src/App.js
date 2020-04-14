@@ -37,7 +37,7 @@ const particlesOptions = {
 }
 
 const initialState = {
-  route: '',
+  route: 'demo',
   input: '',
   imageUrl: '',
   box: [{}],
@@ -59,10 +59,12 @@ class App extends Component {
     this.state = initialState;
   }
 
-
-
   loadUser = (data) => {
     this.setState({
+      input: '',
+      imageUrl: '',
+      box: [{}],
+      foundedFaces: -1,
       user: {
         id: data.id,
         name: data.name,
@@ -87,9 +89,9 @@ class App extends Component {
   }
 
   onButtonSubmit = () => {
-    this.setState({ imageUrl: this.state.input ,box: [{}], foundedFaces: -1});
+    this.setState({ imageUrl: this.state.input, box: [{}], foundedFaces: -1 });
     /*fetch('http://localhost:3000/imageUrl', {*/
-      fetch('https://hidden-inlet-68145.herokuapp.com/imageUrl', {
+    fetch('https://hidden-inlet-68145.herokuapp.com/imageUrl', {
       method: 'post',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -98,30 +100,28 @@ class App extends Component {
     })
       .then(response => response.json())
       .then(response => {
-        if (response) {
-          /*fetch('http://localhost:3000/image', {*/
-            fetch('https://hidden-inlet-68145.herokuapp.com/image', {
-            method: 'put',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              id: this.state.user.id
-            })
+        /*fetch('http://localhost:3000/image', {*/
+        fetch('https://hidden-inlet-68145.herokuapp.com/image', {
+          method: 'put',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: this.state.user.id
           })
-            .then(response => response.json())
-            .then(count => {
-              this.setState(Object.assign(this.state.user, { entries: count }))
-            })
-            .catch(console.log);
-        }
-        if (response.outputs[0].data.regions){
-          this.state.foundedFaces = response.outputs[0].data.regions.length     
+        })
+          .then(response => response.json())
+          .then(count => {
+            this.setState(Object.assign(this.state.user, { entries: count }))
+          })
+          .catch(console.log);
+        if (response.outputs[0].data.regions) {
+          this.state.foundedFaces = response.outputs[0].data.regions.length
           for (var i = 0; i < response.outputs[0].data.regions.length; i++) {
             this.displayBoundingBox(this.calculateFaceLocation(response.outputs[0].data.regions[i]))
           }
         } else {
           this.state.foundedFaces = 0;
-        } 
-        
+        }
+
       })
       .catch(err => console.log(err));
   }
@@ -163,23 +163,40 @@ class App extends Component {
               onButtonSubmit={this.onButtonSubmit}
             />
             {foundedFaces != -1
-            ?(foundedFaces === 1
-              ?<div className="pa2">Founded <font className="white" size="4"><bold>{this.state.foundedFaces}</bold></font> face</div>
-              :(foundedFaces > 1
-                ?<div className="pa2">Founded <font className="white" size="4"><bold>{this.state.foundedFaces}</bold></font> faces</div>
-                :<div className="white pa2">No faces were found</div>))
-            :(imageUrl != ''
-              ?<div className="white pa2">Processing...</div>
-              :<div></div>)}
+              ? (foundedFaces === 1
+                ? <div className="pa2">Founded <font className="white" size="4"><bold>{this.state.foundedFaces}</bold></font> face</div>
+                : (foundedFaces > 1
+                  ? <div className="pa2">Founded <font className="white" size="4"><bold>{this.state.foundedFaces}</bold></font> faces</div>
+                  : <div className="white pa2">No faces were found</div>))
+              : (imageUrl != ''
+                ? <div className="white pa2">Processing...</div>
+                : <div></div>)}
             <FaceRecognition box={box} imageUrl={imageUrl} />
           </div>
-          : (
-            route === 'signin' || route === 'signout' || route === ''
+          : (route === 'demo' || route === 'signout'
+            ? <div>
+              <Logo />
+              <ImageLinkForm
+                onInputChange={this.onInputChange}
+                onButtonSubmit={this.onButtonSubmit}
+              />
+              {foundedFaces != -1
+                ? (foundedFaces === 1
+                  ? <div className="pa2">Founded <font className="white" size="4">{this.state.foundedFaces}</font> face</div>
+                  : (foundedFaces > 1
+                    ? <div className="pa2">Founded <font className="white" size="4">{this.state.foundedFaces}</font> faces</div>
+                    : <div className="white pa2">No faces were found</div>))
+                : (imageUrl != ''
+                  ? <div className="white pa2">Processing...</div>
+                  : <div></div>)}
+              <FaceRecognition box={box} imageUrl={imageUrl} />
+            </div>
+            : (route === 'signin' || route === 'signout'
               ? <SignIn loadUser={this.loadUser} onRouteChange={this.onRouteChange} />
               : <Register loadUser={this.loadUser} onRouteChange={this.onRouteChange} />
-          )
+            ))
         }
-      </div>
+      </div >
     );
   }
 }
