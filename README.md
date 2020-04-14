@@ -1,16 +1,15 @@
 
-##### First project with React, node.js, PostgreSQL, etc.
-
-##### App uses https://www.clarifai.com/ Face Detection model. 
-
-#
-
 #### Try it
 ### https://facerecognitionapp-mn.herokuapp.com/
 
 #
-![Image of overwiev](/_images/overview.png)
-*Emails are only used to log in. No ads or spam.
+### Overview
+![Image of overwiev](https://raw.githubusercontent.com/mikolajnowak97/facerecognitionapp/master/_images/overview.png)
+#
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+##### First project with React, node.js, PostgreSQL, etc.
+
+##### App uses https://www.clarifai.com/ Face Detection model. 
+#
+*Emails are only used to log in. No ads or spam provided.
 
