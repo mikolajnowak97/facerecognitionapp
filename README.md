@@ -9,6 +9,7 @@
 ### https://facerecognitionapp-mn.herokuapp.com/
 
 #
+![Image of overwiev](/_images/overview.png)
 *Emails are only used to log in. No ads or spam.
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
